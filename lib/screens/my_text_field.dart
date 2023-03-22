@@ -82,7 +82,7 @@ class _MyTextFieldState extends State<MyTextField> {
               ),
             ),
             const SizedBox(height: 16.0),
-            !Platform.isIOS
+            Platform.isIOS
                 ? const Center(child: CupertinoActivityIndicator())
                 : const Center(child: CircularProgressIndicator()),
             //button open bottom sheet with adaptive
