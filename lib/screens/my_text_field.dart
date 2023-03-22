@@ -208,7 +208,6 @@ class _MyTextFieldState extends State<MyTextField> {
         : const Center(child: CircularProgressIndicator());
   }
 
-  //display image
   Widget _buildImage() {
     return FutureBuilder<XFile?>(
       future: image == null ? null : Future.value(image),
