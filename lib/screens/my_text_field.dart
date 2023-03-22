@@ -17,7 +17,9 @@ class _MyTextFieldState extends State<MyTextField> {
 
   void _addTextToList() {
     //check if the text exists in the list or not if exists give it a new id and add it to the list else just add it to the list
-    if (_texts.contains(_controller.text)) {
+    if (_controller.text.isEmpty) {
+      return;
+    } else if (_texts.contains(_controller.text)) {
       setState(() {
         i++;
         _texts.add(_controller.text + i.toString());
