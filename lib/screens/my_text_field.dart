@@ -22,11 +22,18 @@ class _MyTextFieldState extends State<MyTextField> {
   XFile? image;
   Future<void> _pickImage(ImageSource source) async {
     image = await _picker.pickImage(source: source);
-    setState(() {
-      image = image;
-    });
     if (image != null) {
       print(image!.path);
+    }
+    //check if the image path ended with.jpeg  if yes change the image path to .jpg
+    if (image!.path.endsWith('.jpeg')) {
+      setState(() {
+        image = XFile(image!.path.replaceAll('.jpeg', '.jpg'));
+      });
+    } else {
+      setState(() {
+        image = XFile(image!.path);
+      });
     }
   }
 
@@ -51,56 +58,62 @@ class _MyTextFieldState extends State<MyTextField> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBody: true,
       body: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            TextField(
-              controller: _controller,
-              decoration: InputDecoration(
-                hintText: 'Enter text',
-                border: const OutlineInputBorder(),
-                suffixIcon: GestureDetector(
-                  onTap: _addTextToList,
-                  child: const Icon(Icons.add),
+        child: SingleChildScrollView(
+          child: SizedBox(
+            height: MediaQuery.of(context).size.height - 100,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                TextField(
+                  controller: _controller,
+                  decoration: InputDecoration(
+                    hintText: 'Enter text',
+                    border: const OutlineInputBorder(),
+                    suffixIcon: GestureDetector(
+                      onTap: _addTextToList,
+                      child: const Icon(Icons.add),
+                    ),
+                  ),
                 ),
-              ),
+                const SizedBox(height: 16.0),
+                SizedBox(
+                  height: 200.0,
+                  child: Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.start,
+                    spacing: 8.0,
+                    runSpacing: 8.0,
+                    children: _texts
+                        .map(
+                          (text) => Chip(
+                            //display the text without i value
+                            label: Text(text.contains(i.toString())
+                                ? text.substring(
+                                    0, text.length - i.toString().length)
+                                : text.substring(0, text.length)),
+                            // Text(text.contains('1')
+                            //     ? text.substring(0, text.length - 1)
+                            //     : text),
+                            onDeleted: () {
+                              setState(() {
+                                _texts.remove(text);
+                                //print the index of the deleted text
+                                print(_texts.indexOf(text));
+                              });
+                            },
+                          ),
+                        )
+                        .toList(),
+                  ),
+                ),
+                const SizedBox(height: 16.0),
+                _buildImage(),
+                const Spacer(),
+                _buildButton(context),
+              ],
             ),
-            const SizedBox(height: 16.0),
-            SizedBox(
-              height: 200.0,
-              child: Wrap(
-                crossAxisAlignment: WrapCrossAlignment.start,
-                spacing: 8.0,
-                runSpacing: 8.0,
-                children: _texts
-                    .map(
-                      (text) => Chip(
-                        //display the text without i value
-                        label: Text(text.contains(i.toString())
-                            ? text.substring(
-                                0, text.length - i.toString().length)
-                            : text.substring(0, text.length)),
-                        // Text(text.contains('1')
-                        //     ? text.substring(0, text.length - 1)
-                        //     : text),
-                        onDeleted: () {
-                          setState(() {
-                            _texts.remove(text);
-                            //print the index of the deleted text
-                            print(_texts.indexOf(text));
-                          });
-                        },
-                      ),
-                    )
-                    .toList(),
-              ),
-            ),
-            const SizedBox(height: 16.0),
-            _buildImage(),
-            const Spacer(),
-            _buildButton(context),
-          ],
+          ),
         ),
       ),
     );
